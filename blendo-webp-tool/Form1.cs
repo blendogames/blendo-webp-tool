@@ -2,8 +2,16 @@ using System.Diagnostics;
 
 namespace blendo_webp_tool
 {
+    struct FrameInfo
+    {
+        public string filename;
+        public int durationMS;
+    }
+
     public partial class Form1 : Form
     {
+        List<FrameInfo> frames;
+
         public Form1()
         {
             InitializeComponent();
@@ -11,6 +19,8 @@ namespace blendo_webp_tool
             this.AllowDrop = true;
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
+
+            AddLog("Drag in image files, or drag in folder of images.");
         }
 
         void Form1_DragEnter(object sender, DragEventArgs e)
@@ -37,7 +47,47 @@ namespace blendo_webp_tool
             //Alphabetize
             Array.Sort(files);
 
-            MakeWebp(files);
+            flowLayoutPanel1.Controls.Clear();
+            for (int i = 0; i < files.Length; i++)
+            {
+                Panel container = new Panel();
+                container.Size = new Size(200, 250);
+                container.Margin = new Padding(10);
+                container.BorderStyle = BorderStyle.FixedSingle;
+
+                PictureBox pb = new PictureBox();
+                pb.Width = 200;
+                pb.Height = 200;
+                pb.Margin = new Padding(10);
+                pb.SizeMode = PictureBoxSizeMode.Zoom;
+                pb.Location = new Point(0, 0);
+
+                using (var stream = new FileStream(files[i], FileMode.Open, FileAccess.Read))
+                {
+                    pb.Image = Image.FromStream(stream);
+                }
+
+                //pb.Tag = "bla";
+
+                Label label = new Label();
+                label.Text = Path.GetFileName(files[i]);
+                label.Font = new Font("Consolas", 9.0f);
+                label.Size = new Size(200, 20);
+                label.Location = new Point(0, 200);
+
+                TextBox textbox = new TextBox();
+                textbox.Text = "bla!";
+                textbox.Width = 40;
+                textbox.Font = new Font("Consolas", 10.0f);
+                textbox.Location = new Point(4, 220);
+                textbox.TextAlign = HorizontalAlignment.Center;
+
+                container.Controls.Add(pb);
+                container.Controls.Add(label);
+                container.Controls.Add(textbox);
+
+                flowLayoutPanel1.Controls.Add(container);
+            }
         }
 
         void MakeWebp(string[] files)
@@ -55,7 +105,7 @@ namespace blendo_webp_tool
             argument += "-o output.webp";
 
             string workingDirectory = Path.GetDirectoryName(files[0]);
-            
+
 
 
             AddLog("Arguments: {0}", argument);
@@ -110,6 +160,16 @@ namespace blendo_webp_tool
 
             int nItems = (int)(listBox1.Height / listBox1.ItemHeight);
             listBox1.TopIndex = listBox1.Items.Count - nItems;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_applyduration_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

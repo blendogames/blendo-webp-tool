@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             listBox1 = new ListBox();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            button1 = new Button();
+            label1 = new Label();
+            textBox1 = new TextBox();
+            button_applyduration = new Button();
             SuspendLayout();
             // 
             // listBox1
@@ -37,25 +42,88 @@
             listBox1.Font = new Font("Consolas", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             listBox1.FormattingEnabled = true;
             listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(12, 455);
+            listBox1.Location = new Point(12, 485);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(960, 94);
+            listBox1.Size = new Size(960, 64);
             listBox1.TabIndex = 0;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            flowLayoutPanel1.AutoScroll = true;
+            flowLayoutPanel1.BorderStyle = BorderStyle.FixedSingle;
+            flowLayoutPanel1.Location = new Point(12, 60);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(960, 419);
+            flowLayoutPanel1.TabIndex = 1;
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button1.Enabled = false;
+            button1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button1.Location = new Point(851, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(121, 51);
+            button1.TabIndex = 2;
+            button1.Text = "Make Webp";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(11, 19);
+            label1.Name = "label1";
+            label1.Size = new Size(168, 15);
+            label1.TabIndex = 3;
+            label1.Text = "Frame duration (milliseconds):";
+            // 
+            // textBox1
+            // 
+            textBox1.Enabled = false;
+            textBox1.Font = new Font("Consolas", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBox1.Location = new Point(185, 15);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(53, 23);
+            textBox1.TabIndex = 4;
+            // 
+            // button_applyduration
+            // 
+            button_applyduration.Enabled = false;
+            button_applyduration.Location = new Point(244, 14);
+            button_applyduration.Name = "button_applyduration";
+            button_applyduration.Size = new Size(128, 24);
+            button_applyduration.TabIndex = 5;
+            button_applyduration.Text = "Apply to all frames";
+            button_applyduration.UseVisualStyleBackColor = true;
+            button_applyduration.Click += button_applyduration_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(984, 561);
+            Controls.Add(button_applyduration);
+            Controls.Add(textBox1);
+            Controls.Add(label1);
+            Controls.Add(button1);
+            Controls.Add(flowLayoutPanel1);
             Controls.Add(listBox1);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "blendo webp tool";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private ListBox listBox1;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private Button button1;
+        private Label label1;
+        private TextBox textBox1;
+        private Button button_applyduration;
     }
 }
