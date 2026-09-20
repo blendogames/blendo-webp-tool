@@ -32,7 +32,7 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             button1 = new Button();
             label1 = new Label();
-            textBox1 = new TextBox();
+            textBox_duration = new TextBox();
             button_applyduration = new Button();
             SuspendLayout();
             // 
@@ -73,27 +73,27 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(11, 19);
+            label1.Location = new Point(12, 9);
             label1.Name = "label1";
             label1.Size = new Size(168, 15);
             label1.TabIndex = 3;
             label1.Text = "Frame duration (milliseconds):";
             // 
-            // textBox1
+            // textBox_duration
             // 
-            textBox1.Enabled = false;
-            textBox1.Font = new Font("Consolas", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox1.Location = new Point(185, 15);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(53, 23);
-            textBox1.TabIndex = 4;
+            textBox_duration.Enabled = false;
+            textBox_duration.Font = new Font("Consolas", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBox_duration.Location = new Point(12, 27);
+            textBox_duration.Name = "textBox_duration";
+            textBox_duration.Size = new Size(53, 23);
+            textBox_duration.TabIndex = 4;
             // 
             // button_applyduration
             // 
             button_applyduration.Enabled = false;
-            button_applyduration.Location = new Point(244, 14);
+            button_applyduration.Location = new Point(71, 26);
             button_applyduration.Name = "button_applyduration";
-            button_applyduration.Size = new Size(128, 24);
+            button_applyduration.Size = new Size(123, 24);
             button_applyduration.TabIndex = 5;
             button_applyduration.Text = "Apply to all frames";
             button_applyduration.UseVisualStyleBackColor = true;
@@ -105,7 +105,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(984, 561);
             Controls.Add(button_applyduration);
-            Controls.Add(textBox1);
+            Controls.Add(textBox_duration);
             Controls.Add(label1);
             Controls.Add(button1);
             Controls.Add(flowLayoutPanel1);
@@ -123,7 +123,7 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private Button button1;
         private Label label1;
-        private TextBox textBox1;
+        private TextBox textBox_duration;
         private Button button_applyduration;
     }
 }

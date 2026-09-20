@@ -2,15 +2,11 @@ using System.Diagnostics;
 
 namespace blendo_webp_tool
 {
-    struct FrameInfo
-    {
-        public string filename;
-        public int durationMS;
-    }
-
     public partial class Form1 : Form
     {
-        List<FrameInfo> frames;
+        const int DEFAULT_FRAMEDURATION = 200;
+
+        public List<FrameInfo> frames;
 
         public Form1()
         {
@@ -20,7 +16,16 @@ namespace blendo_webp_tool
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
 
+            textBox_duration.Text = DEFAULT_FRAMEDURATION.ToString();
+
             AddLog("Drag in image files, or drag in folder of images.");
+        }
+
+        private void EnableButtons(bool value)
+        {
+            textBox_duration.Enabled = value;
+            button1.Enabled = value;
+            button_applyduration.Enabled = value;
         }
 
         void Form1_DragEnter(object sender, DragEventArgs e)
@@ -46,6 +51,22 @@ namespace blendo_webp_tool
 
             //Alphabetize
             Array.Sort(files);
+
+
+            int frameDuration = DEFAULT_FRAMEDURATION;
+            int.TryParse(textBox_duration.Text, out frameDuration);
+
+            frames = new List<FrameInfo>();
+            for (int i = 0; i < files.Length; i++)
+            {
+                FrameInfo frame = new FrameInfo();
+                frame.filename = files[i];
+                frame.durationMS = frameDuration;
+
+                frames.Add(frame);
+            }
+
+
 
             flowLayoutPanel1.Controls.Clear();
             for (int i = 0; i < files.Length; i++)
@@ -76,11 +97,12 @@ namespace blendo_webp_tool
                 label.Location = new Point(0, 200);
 
                 TextBox textbox = new TextBox();
-                textbox.Text = "bla!";
+                textbox.Text = frameDuration.ToString();
                 textbox.Width = 40;
                 textbox.Font = new Font("Consolas", 10.0f);
                 textbox.Location = new Point(4, 220);
-                textbox.TextAlign = HorizontalAlignment.Center;
+                textbox.Tag = i;
+                textbox.Leave += Textbox_Leave;
 
                 container.Controls.Add(pb);
                 container.Controls.Add(label);
@@ -88,6 +110,26 @@ namespace blendo_webp_tool
 
                 flowLayoutPanel1.Controls.Add(container);
             }
+
+            EnableButtons(true);
+        }
+
+        private void Textbox_Leave(object? sender, EventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+            if (textBox == null)            
+                return;
+
+            int imageIndex;
+            if (!int.TryParse(textBox.Tag.ToString(), out imageIndex))
+                return;
+
+            int duration;
+            if (!int.TryParse(textBox.Text, out duration))
+                return;
+
+            frames[imageIndex].durationMS = duration;
         }
 
         void MakeWebp(string[] files)
@@ -171,5 +213,11 @@ namespace blendo_webp_tool
         {
 
         }
+    }
+
+    public class FrameInfo
+    {
+        public string filename;
+        public int durationMS;
     }
 }
