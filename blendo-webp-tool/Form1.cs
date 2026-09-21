@@ -107,8 +107,7 @@ namespace blendo_webp_tool
                     }
                     catch (Exception ex)
                     {
-                        AddLog("ERROR: failed to parse image: {0}", files[i]);
-                        AddLog(ex.Message);
+                        AddLog("ERROR: failed to parse image: {0} ({1})", files[i], ex.Message);
                     }
                 }
 
@@ -124,7 +123,7 @@ namespace blendo_webp_tool
                 textbox.Font = new Font("Consolas", 12.0f);
                 textbox.Location = new Point(4, 220);
                 textbox.Tag = i;
-                textbox.Leave += Textbox_Leave;                
+                textbox.Leave += Textbox_Leave;
                 frames[i].textbox = textbox;
 
                 container.Controls.Add(pb);
@@ -184,7 +183,7 @@ namespace blendo_webp_tool
                     string justFilename = Path.GetFileName(frames[i].filename);
                     AddLog("ERROR: failed to parse duration of: {0}", justFilename);
                     hasError = true;
-                }                
+                }
             }
 
             if (hasError)
@@ -227,7 +226,7 @@ namespace blendo_webp_tool
 
                 argument += $"-d {duration} {qualitySetting} \"{frames[i].filename}\" ";
             }
-            
+
 
             argument += $"-o \"{outputPath}\"";
 
@@ -350,9 +349,28 @@ namespace blendo_webp_tool
                 AddLog("Opening folder: {0}", dirName);
             }
 
-            
-                
 
+
+
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listBox1.BackColor = Color.White;
+
+            string output = string.Empty;
+
+            foreach (object item in listBox1.SelectedItems)
+            {
+                output += item.ToString() + "\r\n";
+            }
+
+            if (string.IsNullOrWhiteSpace(output))
+            {
+                return;
+            }
+
+            Clipboard.SetText(output);
         }
     }
 

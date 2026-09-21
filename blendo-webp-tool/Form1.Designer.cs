@@ -43,21 +43,26 @@
             radioButton_mixed = new RadioButton();
             radioButton_lossless = new RadioButton();
             toolTip1 = new ToolTip(components);
+            contextMenu_log = new ContextMenuStrip(components);
+            copyToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             groupBox1.SuspendLayout();
+            contextMenu_log.SuspendLayout();
             SuspendLayout();
             // 
             // listBox1
             // 
             listBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listBox1.ContextMenuStrip = contextMenu_log;
             listBox1.Font = new Font("Consolas", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             listBox1.FormattingEnabled = true;
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 3);
             listBox1.Name = "listBox1";
+            listBox1.SelectionMode = SelectionMode.MultiExtended;
             listBox1.Size = new Size(954, 94);
             listBox1.TabIndex = 0;
             listBox1.TabStop = false;
@@ -210,6 +215,19 @@
             radioButton_lossless.Text = "Lossless";
             radioButton_lossless.UseVisualStyleBackColor = true;
             // 
+            // contextMenu_log
+            // 
+            contextMenu_log.Items.AddRange(new ToolStripItem[] { copyToolStripMenuItem });
+            contextMenu_log.Name = "contextMenu_log";
+            contextMenu_log.Size = new Size(103, 26);
+            // 
+            // copyToolStripMenuItem
+            // 
+            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            copyToolStripMenuItem.Size = new Size(102, 22);
+            copyToolStripMenuItem.Text = "Copy";
+            copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -231,6 +249,7 @@
             splitContainer1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            contextMenu_log.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -251,5 +270,7 @@
         private TextBox textBox_quality;
         private RadioButton radioButton_lossy;
         private ToolTip toolTip1;
+        private ContextMenuStrip contextMenu_log;
+        private ToolStripMenuItem copyToolStripMenuItem;
     }
 }
