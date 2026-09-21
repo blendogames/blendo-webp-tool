@@ -18,7 +18,14 @@ namespace blendo_webp_tool
 
             textBox_duration.Text = DEFAULT_FRAMEDURATION.ToString();
 
+            textBox_quality.Enter += TextBox_quality_Enter;
+
             AddLog("Drag in image files, or drag in folder of images.");
+        }
+
+        private void TextBox_quality_Enter(object? sender, EventArgs e)
+        {
+            radioButton_lossy.Checked = true;
         }
 
         private void EnableButtons(bool value)
@@ -27,6 +34,12 @@ namespace blendo_webp_tool
             button1.Enabled = value;
             button_applyduration.Enabled = value;
             button_openfolder.Enabled = value;
+
+            groupBox1.Enabled = value;
+
+            label_duration.Enabled = value;
+
+            radioButton_lossless.TabStop = false;
         }
 
         void Form1_DragEnter(object sender, DragEventArgs e)
@@ -107,11 +120,11 @@ namespace blendo_webp_tool
 
                 TextBox textbox = new TextBox();
                 textbox.Text = frameDuration.ToString();
-                textbox.Width = 40;
-                textbox.Font = new Font("Consolas", 10.0f);
+                textbox.Width = 53;
+                textbox.Font = new Font("Consolas", 12.0f);
                 textbox.Location = new Point(4, 220);
                 textbox.Tag = i;
-                textbox.Leave += Textbox_Leave;
+                textbox.Leave += Textbox_Leave;                
                 frames[i].textbox = textbox;
 
                 container.Controls.Add(pb);
@@ -137,14 +150,52 @@ namespace blendo_webp_tool
 
             int duration;
             if (!int.TryParse(textBox.Text, out duration))
+            {
+                AddLog("ERROR: invalid duration: {0}", textBox.Text);
                 return;
+            }
 
             frames[imageIndex].durationMS = duration;
         }
 
         void MakeWebp()
         {
+            AddLog(string.Empty);
             AddLog("------------------------- {0} -------------------------", DateTime.Now.ToShortTimeString());
+
+
+            //Sanity checks.
+            bool hasError = false;
+            int qualityValue = 100;
+            if (radioButton_lossy.Checked)
+            {
+                if (!int.TryParse(textBox_quality.Text, out qualityValue))
+                {
+                    AddLog("ERROR: failed to parse quality value: {0}", textBox_quality.Text);
+                    hasError = true;
+                }
+            }
+
+            for (int i = 0; i < frames.Count; i++)
+            {
+                int value;
+                if (!int.TryParse(frames[i].durationMS.ToString(), out value))
+                {
+                    string justFilename = Path.GetFileName(frames[i].filename);
+                    AddLog("ERROR: failed to parse duration of: {0}", justFilename);
+                    hasError = true;
+                }                
+            }
+
+            if (hasError)
+            {
+                return;
+            }
+
+
+
+
+
 
             //Generate output file name
             string outputDir = Path.GetDirectoryName(frames[0].filename);
@@ -154,13 +205,29 @@ namespace blendo_webp_tool
 
             string argument = "-loop 0 ";
 
+            if (radioButton_mixed.Checked)
+            {
+                argument += "-mixed ";
+            }
+
+            string qualitySetting = string.Empty;
+            if (radioButton_lossy.Checked)
+            {
+                qualitySetting = $"-lossy -q {qualityValue} ";
+            }
+            else if (radioButton_lossless.Checked)
+            {
+                qualitySetting = "-lossless ";
+            }
+
+            //Per-frame settings.
             for (int i = 0; i < frames.Count; i++)
             {
                 int duration = frames[i].durationMS;
 
-                //string justFilename = Path.GetFileName(files[i]);
-                argument += $"-d {duration} \"{frames[i].filename}\" ";
+                argument += $"-d {duration} {qualitySetting} \"{frames[i].filename}\" ";
             }
+            
 
             argument += $"-o \"{outputPath}\"";
 
@@ -233,6 +300,7 @@ namespace blendo_webp_tool
                     frames[i].textbox.Text = newDuration.ToString();
                 }
 
+                AddLog("Applying duration to all frames: {0}", newDuration.ToString());
                 return;
             }
 
@@ -262,11 +330,29 @@ namespace blendo_webp_tool
                               .OrderByDescending(f => f.LastWriteTime)
                               .FirstOrDefault();
 
-            string filePath = Path.Combine(dirName, newestCreated.Name);
+            if (newestCreated == null)
+            {
+                //Just open folder.
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = dirName,
+                    UseShellExecute = true
+                });
+                AddLog("Opening folder: {0}", dirName);
+            }
+            else
+            {
+                //Open folder and select newest file file.
 
-            string arguments = $"/select,\"{filePath}\"";
+                string filePath = Path.Combine(dirName, newestCreated.Name);
+                string arguments = $"/select,\"{filePath}\"";
+                Process.Start("explorer.exe", arguments);
+                AddLog("Opening folder: {0}", dirName);
+            }
 
-            Process.Start("explorer.exe", arguments);            
+            
+                
+
         }
     }
 
