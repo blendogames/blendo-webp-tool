@@ -26,6 +26,7 @@ namespace blendo_webp_tool
             textBox_duration.Enabled = value;
             button1.Enabled = value;
             button_applyduration.Enabled = value;
+            button_openfolder.Enabled = value;
         }
 
         void Form1_DragEnter(object sender, DragEventArgs e)
@@ -46,12 +47,15 @@ namespace blendo_webp_tool
             //if a directory, then grab all files in directory.
             if (files.Length == 1)
             {
-
+                FileAttributes attr = File.GetAttributes(files[0]);
+                if (attr.HasFlag(FileAttributes.Directory))
+                {
+                    files = Directory.GetFiles(files[0]);
+                }
             }
 
             //Alphabetize
             Array.Sort(files);
-
 
             int frameDuration = DEFAULT_FRAMEDURATION;
             int.TryParse(textBox_duration.Text, out frameDuration);
@@ -65,7 +69,6 @@ namespace blendo_webp_tool
 
                 frames.Add(frame);
             }
-
 
 
             flowLayoutPanel1.Controls.Clear();
@@ -85,10 +88,16 @@ namespace blendo_webp_tool
 
                 using (var stream = new FileStream(files[i], FileMode.Open, FileAccess.Read))
                 {
-                    pb.Image = Image.FromStream(stream);
+                    try
+                    {
+                        pb.Image = Image.FromStream(stream);
+                    }
+                    catch (Exception ex)
+                    {
+                        AddLog("ERROR: failed to parse image: {0}", files[i]);
+                        AddLog(ex.Message);
+                    }
                 }
-
-                //pb.Tag = "bla";
 
                 Label label = new Label();
                 label.Text = Path.GetFileName(files[i]);
@@ -103,6 +112,7 @@ namespace blendo_webp_tool
                 textbox.Location = new Point(4, 220);
                 textbox.Tag = i;
                 textbox.Leave += Textbox_Leave;
+                frames[i].textbox = textbox;
 
                 container.Controls.Add(pb);
                 container.Controls.Add(label);
@@ -118,7 +128,7 @@ namespace blendo_webp_tool
         {
             TextBox textBox = sender as TextBox;
 
-            if (textBox == null)            
+            if (textBox == null)
                 return;
 
             int imageIndex;
@@ -132,23 +142,27 @@ namespace blendo_webp_tool
             frames[imageIndex].durationMS = duration;
         }
 
-        void MakeWebp(string[] files)
+        void MakeWebp()
         {
-            //img2webp -loop 2 in0.png -lossy in1.jpg -d 80 in2.tiff -o out.webp
+            AddLog("------------------------- {0} -------------------------", DateTime.Now.ToShortTimeString());
+
+            //Generate output file name
+            string outputDir = Path.GetDirectoryName(frames[0].filename);
+            string outputFilename = string.Format("output_{0}_{1}_{2}_{3}-{4}-{5}.webp", DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            string outputPath = Path.Combine(outputDir, outputFilename);
+
 
             string argument = "-loop 0 ";
 
-            for (int i = 0; i < files.Length; i++)
+            for (int i = 0; i < frames.Count; i++)
             {
+                int duration = frames[i].durationMS;
+
                 //string justFilename = Path.GetFileName(files[i]);
-                argument += $"-d 80 \"{files[i]}\" ";
+                argument += $"-d {duration} \"{frames[i].filename}\" ";
             }
 
-            argument += "-o output.webp";
-
-            string workingDirectory = Path.GetDirectoryName(files[0]);
-
-
+            argument += $"-o \"{outputPath}\"";
 
             AddLog("Arguments: {0}", argument);
 
@@ -167,12 +181,6 @@ namespace blendo_webp_tool
                 proc.StartInfo = startInfo;
                 proc.Start();
 
-                //while (!proc.StandardOutput.EndOfStream)
-                //{
-                //    string line = proc.StandardOutput.ReadLine();
-                //    AddLog_Invoked("    " + line);
-                //}
-
                 while (!proc.StandardError.EndOfStream)
                 {
                     //Standard output.
@@ -185,7 +193,12 @@ namespace blendo_webp_tool
                 AddLog_Invoked("------------------------------");
                 AddLog_Invoked(string.Format("ERROR: {0}", err));
                 AddLog_Invoked("------------------------------");
+                return;
             }
+
+            AddLog(string.Empty);
+            AddLog("Wrote file:");
+            AddLog(outputPath);
         }
 
 
@@ -206,12 +219,54 @@ namespace blendo_webp_tool
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            //Click the GO button
+            MakeWebp();
         }
 
         private void button_applyduration_Click(object sender, EventArgs e)
         {
+            int newDuration;
+            if (int.TryParse(textBox_duration.Text, out newDuration))
+            {
+                for (int i = 0; i < frames.Count; i++)
+                {
+                    frames[i].textbox.Text = newDuration.ToString();
+                }
 
+                return;
+            }
+
+            AddLog("ERROR: failed to parse duration: {0}", textBox_duration.Text);
+        }
+
+        private void button_openfolder_Click(object sender, EventArgs e)
+        {
+            if (frames == null)
+                return;
+
+            if (frames.Count <= 0)
+                return;
+
+            string dirName = Path.GetDirectoryName(frames[0].filename);
+
+            if (!Directory.Exists(dirName))
+            {
+                AddLog("ERROR: directory doesn't exist: {0}", dirName);
+                return;
+            }
+
+
+            DirectoryInfo dir = new DirectoryInfo(dirName);
+
+            FileInfo newestCreated = dir.GetFiles("*.webp")
+                              .OrderByDescending(f => f.LastWriteTime)
+                              .FirstOrDefault();
+
+            string filePath = Path.Combine(dirName, newestCreated.Name);
+
+            string arguments = $"/select,\"{filePath}\"";
+
+            Process.Start("explorer.exe", arguments);            
         }
     }
 
@@ -219,5 +274,6 @@ namespace blendo_webp_tool
     {
         public string filename;
         public int durationMS;
+        public TextBox textbox;
     }
 }

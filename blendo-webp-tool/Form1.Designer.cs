@@ -34,6 +34,7 @@
             label1 = new Label();
             textBox_duration = new TextBox();
             button_applyduration = new Button();
+            button_openfolder = new Button();
             SuspendLayout();
             // 
             // listBox1
@@ -62,6 +63,7 @@
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             button1.Enabled = false;
             button1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button1.ForeColor = Color.Green;
             button1.Location = new Point(851, 3);
             button1.Name = "button1";
             button1.Size = new Size(121, 51);
@@ -99,11 +101,23 @@
             button_applyduration.UseVisualStyleBackColor = true;
             button_applyduration.Click += button_applyduration_Click;
             // 
+            // button_openfolder
+            // 
+            button_openfolder.Enabled = false;
+            button_openfolder.Location = new Point(758, 3);
+            button_openfolder.Name = "button_openfolder";
+            button_openfolder.Size = new Size(87, 51);
+            button_openfolder.TabIndex = 6;
+            button_openfolder.Text = "Open output folder";
+            button_openfolder.UseVisualStyleBackColor = true;
+            button_openfolder.Click += button_openfolder_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(984, 561);
+            Controls.Add(button_openfolder);
             Controls.Add(button_applyduration);
             Controls.Add(textBox_duration);
             Controls.Add(label1);
@@ -125,5 +139,6 @@
         private Label label1;
         private TextBox textBox_duration;
         private Button button_applyduration;
+        private Button button_openfolder;
     }
 }
