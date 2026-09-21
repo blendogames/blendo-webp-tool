@@ -74,19 +74,17 @@ namespace blendo_webp_tool
             int.TryParse(textBox_duration.Text, out frameDuration);
 
             frames = new List<FrameInfo>();
-            for (int i = 0; i < files.Length; i++)
-            {
-                FrameInfo frame = new FrameInfo();
-                frame.filename = files[i];
-                frame.durationMS = frameDuration;
-
-                frames.Add(frame);
-            }
-
-
             flowLayoutPanel1.Controls.Clear();
             for (int i = 0; i < files.Length; i++)
             {
+                if (!File.Exists(files[i]))
+                    continue;
+
+                FrameInfo frame = new FrameInfo();
+                frame.filename = files[i];
+                frame.durationMS = frameDuration;                
+
+
                 Panel container = new Panel();
                 container.Size = new Size(200, 250);
                 container.Margin = new Padding(10);
@@ -108,6 +106,7 @@ namespace blendo_webp_tool
                     catch (Exception ex)
                     {
                         AddLog("ERROR: failed to parse image: {0} ({1})", files[i], ex.Message);
+                        continue;
                     }
                 }
 
@@ -124,13 +123,22 @@ namespace blendo_webp_tool
                 textbox.Location = new Point(4, 220);
                 textbox.Tag = i;
                 textbox.Leave += Textbox_Leave;
-                frames[i].textbox = textbox;
+                frame.textbox = textbox;
 
                 container.Controls.Add(pb);
                 container.Controls.Add(label);
                 container.Controls.Add(textbox);
 
                 flowLayoutPanel1.Controls.Add(container);
+
+
+                frames.Add(frame);
+            }
+
+            AddLog("Total frames: {0}", frames.Count.ToString());
+            if (frames.Count > 0)
+            {
+                AddLog("Ready to make webp...");
             }
 
             EnableButtons(true);
@@ -138,6 +146,12 @@ namespace blendo_webp_tool
 
         private void Textbox_Leave(object? sender, EventArgs e)
         {
+            if (frames == null)
+                return;
+
+            if (frames.Count <= 0)
+                return;
+
             TextBox textBox = sender as TextBox;
 
             if (textBox == null)
@@ -251,14 +265,14 @@ namespace blendo_webp_tool
                 {
                     //Standard output.
                     string line = proc.StandardError.ReadLine();
-                    AddLog_Invoked("    " + line);
+                    AddLog("    " + line);
                 }
             }
             catch (Exception err)
             {
-                AddLog_Invoked("------------------------------");
-                AddLog_Invoked(string.Format("ERROR: {0}", err));
-                AddLog_Invoked("------------------------------");
+                AddLog("------------------------------");
+                AddLog(string.Format("ERROR: {0}", err));
+                AddLog("------------------------------");
                 return;
             }
 
@@ -269,10 +283,7 @@ namespace blendo_webp_tool
 
 
 
-        private void AddLog_Invoked(string text, params string[] args)
-        {
-            AddLog(text, args);
-        }
+        
 
         private void AddLog(string text, params string[] args)
         {
@@ -362,7 +373,7 @@ namespace blendo_webp_tool
 
             foreach (object item in listBox1.SelectedItems)
             {
-                output += item.ToString() + "\r\n";
+                output += item.ToString() + Environment.NewLine;
             }
 
             if (string.IsNullOrWhiteSpace(output))
@@ -370,6 +381,7 @@ namespace blendo_webp_tool
                 return;
             }
 
+            output = output.TrimEnd();
             Clipboard.SetText(output);
         }
     }

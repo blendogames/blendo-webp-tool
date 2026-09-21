@@ -30,6 +30,8 @@
         {
             components = new System.ComponentModel.Container();
             listBox1 = new ListBox();
+            contextMenu_log = new ContextMenuStrip(components);
+            copyToolStripMenuItem = new ToolStripMenuItem();
             flowLayoutPanel1 = new FlowLayoutPanel();
             button1 = new Button();
             label_duration = new Label();
@@ -43,14 +45,12 @@
             radioButton_mixed = new RadioButton();
             radioButton_lossless = new RadioButton();
             toolTip1 = new ToolTip(components);
-            contextMenu_log = new ContextMenuStrip(components);
-            copyToolStripMenuItem = new ToolStripMenuItem();
+            contextMenu_log.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             groupBox1.SuspendLayout();
-            contextMenu_log.SuspendLayout();
             SuspendLayout();
             // 
             // listBox1
@@ -66,6 +66,19 @@
             listBox1.Size = new Size(954, 94);
             listBox1.TabIndex = 0;
             listBox1.TabStop = false;
+            // 
+            // contextMenu_log
+            // 
+            contextMenu_log.Items.AddRange(new ToolStripItem[] { copyToolStripMenuItem });
+            contextMenu_log.Name = "contextMenu_log";
+            contextMenu_log.Size = new Size(103, 26);
+            // 
+            // copyToolStripMenuItem
+            // 
+            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            copyToolStripMenuItem.Size = new Size(102, 22);
+            copyToolStripMenuItem.Text = "Copy";
+            copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
             // 
             // flowLayoutPanel1
             // 
@@ -83,9 +96,9 @@
             button1.Enabled = false;
             button1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             button1.ForeColor = Color.Green;
-            button1.Location = new Point(746, 9);
+            button1.Location = new Point(843, 9);
             button1.Name = "button1";
-            button1.Size = new Size(226, 48);
+            button1.Size = new Size(129, 48);
             button1.TabIndex = 7;
             button1.TabStop = false;
             button1.Text = "Make Webp";
@@ -130,7 +143,7 @@
             // 
             button_openfolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             button_openfolder.Enabled = false;
-            button_openfolder.Location = new Point(653, 9);
+            button_openfolder.Location = new Point(750, 9);
             button_openfolder.Name = "button_openfolder";
             button_openfolder.Size = new Size(87, 48);
             button_openfolder.TabIndex = 6;
@@ -166,7 +179,7 @@
             groupBox1.Controls.Add(radioButton_mixed);
             groupBox1.Controls.Add(radioButton_lossless);
             groupBox1.Enabled = false;
-            groupBox1.Location = new Point(211, 3);
+            groupBox1.Location = new Point(250, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(436, 54);
             groupBox1.TabIndex = 2;
@@ -215,19 +228,6 @@
             radioButton_lossless.Text = "Lossless";
             radioButton_lossless.UseVisualStyleBackColor = true;
             // 
-            // contextMenu_log
-            // 
-            contextMenu_log.Items.AddRange(new ToolStripItem[] { copyToolStripMenuItem });
-            contextMenu_log.Name = "contextMenu_log";
-            contextMenu_log.Size = new Size(103, 26);
-            // 
-            // copyToolStripMenuItem
-            // 
-            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            copyToolStripMenuItem.Size = new Size(102, 22);
-            copyToolStripMenuItem.Text = "Copy";
-            copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -243,13 +243,13 @@
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "blendo webp tool";
+            contextMenu_log.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            contextMenu_log.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
