@@ -276,7 +276,20 @@ namespace blendo_webp_tool
                 return;
             }
 
+
+
             AddLog(string.Empty);
+
+
+            //Get animation length.
+            int total = 0;
+            for (int i = 0; i < frames.Count; i++)
+            {
+                total += frames[i].durationMS;
+            }
+            AddLog("Animation length: {0} seconds", (total / 1000.0f).ToString("F1"));
+
+
             AddLog("Wrote file:");
             AddLog(outputPath);
         }
@@ -310,7 +323,7 @@ namespace blendo_webp_tool
                     frames[i].textbox.Text = newDuration.ToString();
                 }
 
-                AddLog("Applying duration to all frames: {0}", newDuration.ToString());
+                AddLog("Applying duration {0} to all frames.", newDuration.ToString());
                 return;
             }
 
